@@ -1,3 +1,4 @@
+import 'package:base_flutter/example/models/file/file_item.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../core/providers/theme_provider.dart';
@@ -7,8 +8,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final themeProvider = context.watch<ThemeProvider>();
     final themeProvider = GetIt.instance<ThemeProvider>();
+
     return Scaffold(
       appBar: AppBar(title: Text('hello'.tr())), // 多语言
       body: Column(
@@ -38,4 +39,20 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+
+  List<FileItem> _sampleFiles() => [
+    FileItem(
+        id: '1',
+        filename: 'main',
+        ext: 'dart',
+        isDirectory: false,
+        size: 1024,
+        modifiedAt: DateTime.now()),
+    FileItem(
+        id: '2', filename: 'index', ext: 'html', isDirectory: false, size: 2048),
+    FileItem(
+        id: '3', filename: 'document', ext: 'pdf', isDirectory: false, modifiedAt: DateTime.now()),
+  ];
 }
+
+

@@ -1,5 +1,18 @@
 {
   "hello": "你好，世界！",
   "toggle_theme": "切换主题",
-  "toggle_language": "切换语言"
+  "toggle_language": "切换语言",
+  "tab": {
+    "home": "首页",
+    "profile": "个人信息",
+    "file_list": "文件列表"
+  },
+  "auth": {
+    "title": "登录",
+    "username": "用户名",
+    "password": "密码",
+    "button": "登录",
+    "username_required": "请输入用户名",
+    "password_required": "请输入密码"
+  }
 }

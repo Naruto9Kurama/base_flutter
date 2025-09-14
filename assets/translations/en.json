@@ -1,5 +1,18 @@
 {
   "hello": "Hello World!",
   "toggle_theme": "Toggle Theme",
-  "toggle_language": "Toggle Language"
+  "toggle_language": "Toggle Language",
+  "tab": {
+    "home": "home",
+    "profile": "profile",
+    "file_list": "File List"
+  },
+  "auth": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "button": "Sign In",
+    "username_required": "Please enter your username",
+    "password_required": "Please enter your password"
+  }
 }

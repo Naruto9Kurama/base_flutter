@@ -1,0 +1,70 @@
+// models/file_item.dart
+import 'package:base_flutter/example/enums/file_platform.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'file_item.g.dart';
+
+@JsonSerializable()
+class FileItem {
+  final String id;
+  final String filename;
+  final bool isDirectory;
+  final String? ext;
+  final int? size; // 字节
+  final DateTime? modifiedAt;
+  final FilePlatform origin; // 来源枚举，必填更安全
+
+  const FileItem({
+    required this.id,
+    required this.filename,
+    required this.isDirectory,
+    this.ext,
+    this.size,
+    this.modifiedAt,
+    this.origin = FilePlatform.other,
+  });
+
+  factory FileItem.fromJson(Map<String, dynamic> json) => _$FileItemFromJson(json);
+  Map<String, dynamic> toJson() => _$FileItemToJson(this);
+
+  /// 显示名称：文件夹显示名称，文件显示带扩展名
+  String get displayName {
+    if (isDirectory || ext == null || ext!.isEmpty) {
+      return filename;
+    }
+    return '$filename.$ext';
+  }
+
+  /// 可读大小字符串，例如 "1.2 MB"
+  String get readableSize {
+    if (isDirectory || size == null) return '';
+    final kb = 1024;
+    final mb = kb * 1024;
+    final gb = mb * 1024;
+
+    if (size! >= gb) return '${(size! / gb).toStringAsFixed(2)} GB';
+    if (size! >= mb) return '${(size! / mb).toStringAsFixed(2)} MB';
+    if (size! >= kb) return '${(size! / kb).toStringAsFixed(2)} KB';
+    return '$size B';
+  }
+
+  /// 文件是否是图片类型
+  bool get isImage {
+    if (isDirectory || ext == null) return false;
+    const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+    return imageExts.contains(ext!.toLowerCase());
+  }
+
+  /// 文件是否是视频类型
+  bool get isVideo {
+    if (isDirectory || ext == null) return false;
+    const videoExts = ['mp4', 'avi', 'mkv', 'mov', 'flv', 'wmv'];
+    return videoExts.contains(ext!.toLowerCase());
+  }
+
+  /// 判断文件是否有扩展名
+  bool get hasExtension => !isDirectory && ext != null && ext!.isNotEmpty;
+
+  /// 判断文件是否可预览（图片或视频）
+  bool get isPreviewable => isImage || isVideo;
+}
