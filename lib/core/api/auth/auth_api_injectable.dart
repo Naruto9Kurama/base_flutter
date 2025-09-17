@@ -1,5 +1,6 @@
 // auth_api_injectable.dart
 import 'package:base_flutter/core/api/dio_client.dart';
+import 'package:base_flutter/core/config/app_config.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dio/dio.dart';
 import 'package:base_flutter/example/features/base/models/http/base_response.dart';
@@ -12,7 +13,7 @@ import '../../../example/features/base/models/http/auth/login_response.dart';
 class AuthApiInjectable implements AuthApi {
   final AuthApi _api;
 
-  AuthApiInjectable(DioClient client) : _api = AuthApi(client.dio);
+  AuthApiInjectable(DioClient client,AppConfig config) : _api = AuthApi(client,config);
 
   @override
   Future<BaseResponse<LoginResponse>> login(request) => _api.login(request);
