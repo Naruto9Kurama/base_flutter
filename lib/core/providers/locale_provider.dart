@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:injectable/injectable.dart';
+@LazySingleton()
 class LocaleProvider extends ChangeNotifier {
   Locale _locale = const Locale('en');
 

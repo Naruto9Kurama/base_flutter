@@ -1,5 +1,6 @@
 // models/file_item.dart
-import 'package:base_flutter/example/enums/file_platform.dart';
+import 'package:base_flutter/example/features/file/enums/file_platform.dart';
+import 'package:base_flutter/example/features/drives/models/ali/ali_drive_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'file_item.g.dart';
@@ -67,4 +68,14 @@ class FileItem {
 
   /// 判断文件是否可预览（图片或视频）
   bool get isPreviewable => isImage || isVideo;
+
+
+
+
+
+  static List<FileItem> toFileItemList(
+      List<AliDriveItem> items) {
+    return items.map((e) => e.toFileItem()).toList();
+  }
+
 }

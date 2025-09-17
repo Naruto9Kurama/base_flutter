@@ -1,4 +1,4 @@
-import 'package:base_flutter/example/models/file/file_item.dart';
+import 'package:base_flutter/example/features/file/models/file/file_item.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../core/providers/theme_provider.dart';

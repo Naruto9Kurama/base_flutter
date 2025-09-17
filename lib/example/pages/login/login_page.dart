@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:get_it/get_it.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/api/auth/auth_api.dart';
-import '../../models/http/auth/login_request.dart';
+import '../../features/base/models/http/auth/login_request.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

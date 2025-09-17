@@ -1,4 +1,9 @@
+import 'package:base_flutter/core/config/app_config.dart';
+import 'package:base_flutter/example/features/drives/models/token.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hive_ce/hive.dart'; // 用于 Hive 存储的核心库
+import 'package:hive_ce_flutter/hive_flutter.dart'; // Flutter 与 Hive 的集成
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'core/di/injection.dart';
@@ -10,7 +15,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
-  setupDI(); // 注册 DI
+
+ // 初始化 Hive
+  await Hive.initFlutter();
+  Hive.registerAdapter(TokenAdapter());  // 注册适配器
+
+  // 异步加载配置
+  final config = await AppConfig.load();
+  //手动注入配置类
+  GetIt.instance.registerSingleton<AppConfig>(config);
+
+  // setupDI(); // 注册 DI
+  configureDependencies();
 
   runApp(
     EasyLocalization(

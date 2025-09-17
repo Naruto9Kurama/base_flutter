@@ -1,7 +1,7 @@
 // example/pages/file/file_list_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/file/file_provider.dart';
+import '../../features/file/providers/file_provider.dart';
 import '../../../core/di/injection.dart';
 import 'file_list_item.dart';
 import 'file_list_bottom_bar.dart';

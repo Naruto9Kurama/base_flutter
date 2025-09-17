@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import '../core/providers/theme_provider.dart';
 import '../example/pages/file/file_list_page.dart';
-import '../example/models/file/file_item.dart';
+import '../example/features/file/models/file/file_item.dart';
 
 class TabItem {
   final Widget page;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:injectable/injectable.dart';
+@LazySingleton()
 class ThemeProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.system;
 
