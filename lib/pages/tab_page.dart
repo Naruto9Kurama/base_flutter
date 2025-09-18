@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../core/providers/theme_provider.dart';
 import '../example/pages/file/file_list_page.dart';
 import '../example/features/file/models/file/file_item.dart';
-
+import 'package:base_flutter/example/pages/drive/drive_main_page.dart';
 class TabItem {
   final Widget page;
   final IconData icon;
@@ -67,6 +67,16 @@ class _TabPageState extends State<TabPage> {
       icon: Icons.folder_open_outlined,
       activeIcon: Icons.folder_open,
       label: 'tab.file_list',
+      lightSelectedColor: Colors.purple,
+      darkSelectedColor: Colors.purpleAccent,
+      lightUnselectedColor: Colors.grey,
+      darkUnselectedColor: Colors.white70,
+    ),
+    TabItem(
+      page: DriveMainScreen(),
+      icon: Icons.folder_open_outlined,
+      activeIcon: Icons.folder_open,
+      label: 'tab.drive',
       lightSelectedColor: Colors.purple,
       darkSelectedColor: Colors.purpleAccent,
       lightUnselectedColor: Colors.grey,

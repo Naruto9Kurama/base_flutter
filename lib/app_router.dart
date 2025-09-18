@@ -1,3 +1,4 @@
+import 'package:base_flutter/example/pages/drive/drive_main_page.dart';
 import 'package:base_flutter/example/pages/login/login_page.dart';
 import 'package:base_flutter/pages/tab_page.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +19,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/tab-page',
       builder: (context, state) => const TabPage(),
+    ),
+    GoRoute(
+      path: '/drive',
+      builder: (context, state) => const DriveMainScreen(),
     ),
   ],
 );

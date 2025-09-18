@@ -2,7 +2,6 @@ import 'package:base_flutter/example/features/drives/serives/file_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import '../models/file/file_item.dart';
-import '../../drives/respository/file_repository.dart';
 import 'package:injectable/injectable.dart';
 @LazySingleton()
 class FileProvider extends ChangeNotifier {

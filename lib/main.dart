@@ -1,5 +1,6 @@
 import 'package:base_flutter/core/config/app_config.dart';
 import 'package:base_flutter/example/features/drives/models/token.dart';
+import 'package:base_flutter/hive_registrar.g.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_ce/hive.dart'; // 用于 Hive 存储的核心库
@@ -18,7 +19,7 @@ void main() async {
 
  // 初始化 Hive
   await Hive.initFlutter();
-  Hive.registerAdapter(TokenAdapter());  // 注册适配器
+  Hive.registerAdapters();
 
   // 异步加载配置
   final config = await AppConfig.load();
