@@ -22,8 +22,21 @@ class DriveMainScreen extends StatefulWidget {
 class _DriveMainScreenState extends State<DriveMainScreen> {
   final List<DriveConfig> _drives = [];
 
+
+  @override
+  void initState() {
+    super.initState();
+    HiveManager.openBox<DriveConfig>(HiveBoxes.driveConfig).then((box)=>{
+      setState(() {
+        _drives.clear();
+        _drives.addAll(HiveManager.getAll<DriveConfig>(box));
+      })
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: const Text('我的网盘'),
