@@ -2,10 +2,12 @@
 import 'package:base_flutter/core/storage/hive_manager.dart';
 import 'package:base_flutter/example/constants/hive_boxes.dart';
 import 'package:base_flutter/example/features/drives/models/drive_config.dart';
+import 'package:base_flutter/example/features/drives/serives/drive_service.dart';
 import 'package:base_flutter/example/features/file/enums/file_platform.dart';
 import 'package:base_flutter/example/pages/drive/models/drive_config_base_template.dart';
 import 'package:flutter/material.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:get_it/get_it.dart';
 
 class AliyunDriveTemplate {
   static DriveConfigBaseTemplate get template => DriveConfigBaseTemplate(
@@ -113,7 +115,8 @@ class AliyunDriveTemplate {
       ),
     ],
     onSave:  (updatedConfig) async {
-
+      DriveService service=GetIt.instance<DriveService>();
+      service.saveDrive(updatedConfig);
       return "";
     }
   );

@@ -1,6 +1,7 @@
 // api/file_api_retrofit.dart
 import 'package:base_flutter/core/api/dio_client.dart';
 import 'package:base_flutter/core/config/app_config.dart';
+import 'package:base_flutter/example/features/drives/models/ali/ali_token_response.dart';
 import 'package:base_flutter/example/features/file/enums/file_platform.dart';
 import 'package:base_flutter/example/features/drives/models/ali/ali_drive_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -20,7 +21,10 @@ abstract class AliFileApi {
       _AliFileApi(client.dio, baseUrl: config['baseUrl']);
 
   @POST("/adrive/v1.0/openFile/list")
-  Future<AliDriveResponse> listFiles( @Body() Map<String, dynamic> body,@Header("Authorization") String token);
+  Future<AliDriveResponse> listFiles(@Body() Map<String, dynamic> body,@Header("Authorization") String token);
+
+  @POST("/oauth/access_token")
+  Future<AliTokenResponse> token( @Body() Map<String, dynamic> body);
 
   @POST("/file/copy")
   Future<void> copyFile({@Query("sourceId") required String sourceId, @Query("targetDirId") required String targetDirId});

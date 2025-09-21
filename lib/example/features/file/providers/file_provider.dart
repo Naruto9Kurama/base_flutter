@@ -20,7 +20,10 @@ class FileProvider extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
-      // files = await service.listFile();
+      service.rootList().then((fileItems){
+        files.addAll(fileItems);
+        notifyListeners();
+      });
     } finally {
       isLoading = false;
       notifyListeners();
@@ -69,6 +72,7 @@ class FileProvider extends ChangeNotifier {
         size: file.size,
         modifiedAt: file.modifiedAt,
         origin: file.origin,
+        ssMountName: file.ssMountName
       );
     }
     notifyListeners();

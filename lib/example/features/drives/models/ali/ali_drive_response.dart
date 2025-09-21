@@ -8,10 +8,12 @@ part 'ali_drive_response.g.dart';
 class AliDriveResponse {
   final List<AliDriveItem> items;
   final String? next_marker;
+  final String? ssMountName;
 
   AliDriveResponse({
     required this.items,
     this.next_marker,
+    this.ssMountName,
   });
 
   factory AliDriveResponse.fromJson(Map<String, dynamic> json) =>
@@ -116,7 +118,7 @@ class AliDriveItem {
   Map<String, dynamic> toJson() => _$AliDriveItemToJson(this);
 
   // 将 AliDriveItem 转换为 FileItem
-  FileItem toFileItem() {
+  FileItem toFileItem(String ssMountName) {
     return FileItem(
       id: file_id ?? '',
       filename: name ?? '',
@@ -124,13 +126,15 @@ class AliDriveItem {
       isDirectory: type == 'folder',
       size: size,
       origin: FilePlatform.aliyun,
+        ssMountName: ssMountName
+
     );
   }
 
   /// 批量转换
   static List<FileItem> toFileItemList(
-      List<AliDriveItem> items) {
-    return items.map((e) => e.toFileItem()).toList();
+      List<AliDriveItem> items,String ssMountName) {
+    return items.map((e) => e.toFileItem(ssMountName)).toList();
   }
 
   /// 工具属性

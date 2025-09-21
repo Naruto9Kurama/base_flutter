@@ -14,6 +14,7 @@ class FileItem {
   final int? size; // 字节
   final DateTime? modifiedAt;
   final FilePlatform origin; // 来源枚举，必填更安全
+  final String ssMountName; // 来源枚举，必填更安全
 
   const FileItem({
     required this.id,
@@ -23,6 +24,7 @@ class FileItem {
     this.size,
     this.modifiedAt,
     this.origin = FilePlatform.other,
+    required this.ssMountName,
   });
 
   factory FileItem.fromJson(Map<String, dynamic> json) => _$FileItemFromJson(json);
@@ -74,8 +76,8 @@ class FileItem {
 
 
   static List<FileItem> toFileItemList(
-      List<AliDriveItem> items) {
-    return items.map((e) => e.toFileItem()).toList();
+      List<AliDriveItem> items,String ssMountName) {
+    return items.map((e) => e.toFileItem(ssMountName)).toList();
   }
 
 }

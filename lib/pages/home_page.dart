@@ -41,17 +41,17 @@ class HomePage extends StatelessWidget {
   }
 
   List<FileItem> _sampleFiles() => [
-    FileItem(
-        id: '1',
-        filename: 'main',
-        ext: 'dart',
-        isDirectory: false,
-        size: 1024,
-        modifiedAt: DateTime.now()),
-    FileItem(
-        id: '2', filename: 'index', ext: 'html', isDirectory: false, size: 2048),
-    FileItem(
-        id: '3', filename: 'document', ext: 'pdf', isDirectory: false, modifiedAt: DateTime.now()),
+    // FileItem(
+    //     id: '1',
+    //     filename: 'main',
+    //     ext: 'dart',
+    //     isDirectory: false,
+    //     size: 1024,
+    //     modifiedAt: DateTime.now()),
+    // FileItem(
+    //     id: '2', filename: 'index', ext: 'html', isDirectory: false, size: 2048),
+    // FileItem(
+    //     id: '3', filename: 'document', ext: 'pdf', isDirectory: false, modifiedAt: DateTime.now()),
   ];
 }
 
