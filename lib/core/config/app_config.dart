@@ -13,4 +13,7 @@ class AppConfig {
   }
 
   dynamic operator [](String key) => _config[key];
+
+  
+  get aliyun=> _config['drives']['aliyundrive'];
 }

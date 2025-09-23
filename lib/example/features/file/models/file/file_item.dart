@@ -1,4 +1,5 @@
 // models/file_item.dart
+import 'package:base_flutter/example/features/drives/models/drive_config.dart';
 import 'package:base_flutter/example/features/file/enums/file_platform.dart';
 import 'package:base_flutter/example/features/drives/models/ali/ali_drive_response.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -8,26 +9,25 @@ part 'file_item.g.dart';
 @JsonSerializable()
 class FileItem {
   final String id;
-  final String filename;
+  String filename;
   final bool isDirectory;
+  final String mountName;
   final String? ext;
   final int? size; // 字节
   final DateTime? modifiedAt;
-  final FilePlatform origin; // 来源枚举，必填更安全
-  final String ssMountName; // 来源枚举，必填更安全
 
-  const FileItem({
+  FileItem({
     required this.id,
     required this.filename,
     required this.isDirectory,
+    required this.mountName,
     this.ext,
     this.size,
     this.modifiedAt,
-    this.origin = FilePlatform.other,
-    required this.ssMountName,
   });
 
-  factory FileItem.fromJson(Map<String, dynamic> json) => _$FileItemFromJson(json);
+  factory FileItem.fromJson(Map<String, dynamic> json) =>
+      _$FileItemFromJson(json);
   Map<String, dynamic> toJson() => _$FileItemToJson(this);
 
   /// 显示名称：文件夹显示名称，文件显示带扩展名
@@ -71,13 +71,10 @@ class FileItem {
   /// 判断文件是否可预览（图片或视频）
   bool get isPreviewable => isImage || isVideo;
 
-
-
-
-
   static List<FileItem> toFileItemList(
-      List<AliDriveItem> items,String ssMountName) {
+    List<AliDriveItem> items,
+    String ssMountName,
+  ) {
     return items.map((e) => e.toFileItem(ssMountName)).toList();
   }
-
 }

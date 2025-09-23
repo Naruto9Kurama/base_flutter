@@ -18,10 +18,14 @@ class DriveConfig extends HiveObject {
   @HiveField(2)
   final Map<String, dynamic> config;
 
+  @HiveField(3)
+  final String key;
+
   DriveConfig({
     required this.driveType,
     required this.name,
     required this.config,
+    required this.key,
   });
 
 

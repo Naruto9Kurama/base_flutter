@@ -1,4 +1,5 @@
 // templates/aliyun_drive_template.dart
+import 'package:base_flutter/core/config/app_config.dart';
 import 'package:base_flutter/core/storage/hive_manager.dart';
 import 'package:base_flutter/example/constants/hive_boxes.dart';
 import 'package:base_flutter/example/features/drives/models/drive_config.dart';
@@ -110,7 +111,7 @@ class AliyunDriveTemplate {
         type: DriveFieldType.url,
         required: false,
         icon: Icons.link,
-        defaultValue: 'https://api.aliyundrive.com',
+        defaultValue: GetIt.instance<AppConfig>().aliyun['baseUrl'],
         validator: FormBuilderValidators.url(errorText: '请输入有效的URL地址'),
       ),
     ],

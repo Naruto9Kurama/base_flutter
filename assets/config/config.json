@@ -1,3 +1,10 @@
 {
-  "baseUrl": "https://openapi.aliyundrive.com"
+  "baseUrl": "https://openapi.aliyundrive.com",
+  "drives":{
+    "aliyundrive":{
+      "baseUrl":"https://openapi.aliyundrive.com",
+      "client_id":"12cf2118bc3e445aaaeb3807005983e2",
+      "client_secret":"86f83dfd84a94d93873bab44f3b6af7a"
+    }
+  }
 }

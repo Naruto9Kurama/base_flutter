@@ -1,5 +1,7 @@
+import 'package:base_flutter/example/features/drives/models/drive_config.dart';
 import 'package:base_flutter/example/features/drives/models/token.dart';
 import 'package:base_flutter/example/features/drives/respository/file_repository.dart';
+import 'package:base_flutter/example/features/drives/serives/drive_service.dart';
 import 'package:base_flutter/example/features/drives/serives/token_service.dart';
 import 'package:get_it/get_it.dart';
 
@@ -14,6 +16,12 @@ import 'package:injectable/injectable.dart';
 class AliFileRepository extends FileRepository {
   AliFileApi api = GetIt.instance<AliFileApi>();
   TokenService tokenService = GetIt.instance<TokenService>();
+  DriveService driveService = GetIt.instance<DriveService>();
+  static final FilePlatform platform = FilePlatform.aliyun;
+
+  Future<String?> getToken(FileItem file) async {
+    return tokenService.getToken(file.mountName);
+  }
 
   Future<List<FileItem>> fetchFiles() async {
     await Future.delayed(const Duration(seconds: 2));
@@ -21,15 +29,19 @@ class AliFileRepository extends FileRepository {
   }
 
   Future<List<FileItem>> listFile(FileItem file) async {
-    String? token = await tokenService.getToken(file.ssMountName);
-    // 判断 token 是否为 null 或者 token.getBearerToken 是否为 null
-    if (token == null) {
-      // 如果 token 或 token.getBearerToken 为 null，返回一个空列表
-      return [];
-    }
-    return api
-        .listFiles({"parent_file_id": "root", "drive_id": "788219542"}, token)
-        .then((res) => FileItem.toFileItemList(res.items,res.ssMountName??""));
+   return getToken(file).then((token) {
+      if (token == null) {
+        return [];
+      }
+      return api
+          .listFiles({
+            "parent_file_id": file.id.isEmpty ? "root" : file.id,
+            "drive_id": "788219542",
+          }, token)
+          .then(
+            (res) => FileItem.toFileItemList(res.items, file.mountName ?? ""),
+          );
+    });
   }
 
   Future<void> deleteFile(FileItem file) async {}
@@ -41,7 +53,10 @@ class AliFileRepository extends FileRepository {
   Future<void> copyFile(FileItem file, String targetPath) async {}
 
   @override
-  Future<List<FileItem>> rootFiles() async {
-    return listFile(FileItem(id: "1", filename: "test", isDirectory: true, ssMountName: "/test"));
+  Future<List<FileItem>> rootFiles(String name) async {
+    // DriveConfig? drive = await driveService.getDrive(name);
+    return listFile(
+      FileItem(id: "1", filename: "test", isDirectory: true, mountName: name),
+    );
   }
 }

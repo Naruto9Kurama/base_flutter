@@ -6,6 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:get_it/get_it.dart';
+import 'package:base_flutter/example/features/drives/serives/drive_service.dart';
+import 'package:go_router/go_router.dart';
+import 'dart:math';
 
 class AddDriveScreen extends StatefulWidget {
   final DriveConfigBaseTemplate template;
@@ -66,7 +70,7 @@ class _AddDriveScreenState extends State<AddDriveScreen> {
             : '添加${widget.template.displayName}'),
         leading: PlatformIconButton(
           icon: Icon(PlatformIcons(context).back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
         trailingActions: [
           PlatformTextButton(
@@ -163,18 +167,35 @@ class _AddDriveScreenState extends State<AddDriveScreen> {
   }
 
   Widget _buildNameField() {
-    return FormBuilderTextField(
-      name: 'name',
-      decoration: InputDecoration(
-        labelText: '驱动器名称 *',
-        hintText: '为此驱动器起一个名称',
-        prefixIcon: Icon(PlatformIcons(context).settings),
-        border: const OutlineInputBorder(),
-      ),
-      validator: FormBuilderValidators.compose([
-        FormBuilderValidators.required(errorText: '请输入驱动器名称'),
-        FormBuilderValidators.minLength(1, errorText: '名称不能为空'),
-      ]),
+    return FutureBuilder<List<DriveConfig>>(
+      future: GetIt.instance.get<DriveService>().getAllDrive(),
+      builder: (context, snapshot) {
+        final existingMountNames = snapshot.data?.map((e) => e.name).toSet() ?? {};
+        return FormBuilderTextField(
+          name: 'name',
+          decoration: InputDecoration(
+            labelText: '挂载目录名 *',
+            hintText: '为此驱动器设置唯一挂载目录名',
+            prefixIcon: Icon(PlatformIcons(context).folder),
+            border: const OutlineInputBorder(),
+          ),
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(errorText: '请输入挂载目录名'),
+            FormBuilderValidators.minLength(1, errorText: '名称不能为空'),
+            (value) {
+              if (value == null || value.isEmpty) return null;
+              // 编辑时允许原名通过
+              if (widget.existingConfig != null && value == widget.existingConfig!.name) {
+                return null;
+              }
+              if (existingMountNames.contains(value)) {
+                return '该挂载目录名已存在，请换一个';
+              }
+              return null;
+            },
+          ]),
+        );
+      },
     );
   }
 
@@ -330,17 +351,21 @@ class _AddDriveScreenState extends State<AddDriveScreen> {
       final formData = _formKey.currentState!.value;
       final name = formData['name'] as String;
       final config = Map<String, dynamic>.from(formData)..remove('name');
-
+      String key;
+      if (widget.existingConfig != null) {
+        key = widget.existingConfig!.key;
+      } else {
+        key = _randomString(16);
+      }
       final driveConfig = DriveConfig(
+        key: key,
         driveType: widget.template.driveType,
         name: name,
         config: config,
       );
-
       await widget.onSave(driveConfig);
-      
       if (mounted) {
-        Navigator.of(context).pop(driveConfig);
+        context.pop();
       }
     } catch (e) {
       if (mounted) {
@@ -352,7 +377,7 @@ class _AddDriveScreenState extends State<AddDriveScreen> {
             actions: [
               PlatformDialogAction(
                 child: const Text('确定'),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => context.pop(),
               ),
             ],
           ),
@@ -363,5 +388,11 @@ class _AddDriveScreenState extends State<AddDriveScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  String _randomString(int length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    final rand = Random.secure();
+    return List.generate(length, (_) => chars[rand.nextInt(chars.length)]).join();
   }
 }

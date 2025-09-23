@@ -164,7 +164,7 @@ class _DriveMainScreenState extends State<DriveMainScreen> {
     return template;
   }
   void _showAddDriveScreen() {
-    var template = getTemplate(DriveConfig(driveType: FilePlatform.aliyun, name: "111", config: {}));
+    var template = getTemplate(DriveConfig(key:'',driveType: FilePlatform.aliyun, name: "111", config: {}));
     Navigator.of(context).push(
       platformPageRoute(
         context: context,

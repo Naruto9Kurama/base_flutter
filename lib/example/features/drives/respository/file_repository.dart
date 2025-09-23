@@ -12,7 +12,7 @@ abstract class FileRepository {
 
 
   Future<List<FileItem>> listFile(FileItem file)  ;
-  Future<List<FileItem>> rootFiles()  ;
+  Future<List<FileItem>> rootFiles(String name)  ;
 
   Future<void> deleteFile(FileItem file) ;
 

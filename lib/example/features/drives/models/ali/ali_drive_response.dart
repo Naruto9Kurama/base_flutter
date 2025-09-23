@@ -8,12 +8,10 @@ part 'ali_drive_response.g.dart';
 class AliDriveResponse {
   final List<AliDriveItem> items;
   final String? next_marker;
-  final String? ssMountName;
 
   AliDriveResponse({
     required this.items,
     this.next_marker,
-    this.ssMountName,
   });
 
   factory AliDriveResponse.fromJson(Map<String, dynamic> json) =>
@@ -58,12 +56,12 @@ class AliDriveItem {
   final String? local_created_at;
   final String? local_modified_at;
   final String? trashed_at;
-  final String? punish_flag;
+  final int? punish_flag;
   final String? id_path;
   final String? name_path;
-  final String? video_media_metadata;
-  final String? image_media_metadata;
-  final String? video_preview_metadata;
+  final Map<String, dynamic>? video_media_metadata;
+  final Map<String, dynamic>? image_media_metadata;
+  final Map<String, dynamic>? video_preview_metadata;
   final String? streams_info;
   final String? play_cursor;
 
@@ -125,8 +123,7 @@ class AliDriveItem {
       ext: file_extension,
       isDirectory: type == 'folder',
       size: size,
-      origin: FilePlatform.aliyun,
-        ssMountName: ssMountName
+      mountName: ssMountName
 
     );
   }
