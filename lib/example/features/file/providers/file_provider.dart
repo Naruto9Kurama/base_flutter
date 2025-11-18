@@ -3,6 +3,7 @@ import 'package:base_flutter/example/features/drives/serives/file_service.dart';
 import 'package:base_flutter/example/features/file/models/file/file_item.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton()
@@ -46,7 +47,7 @@ class FileProvider extends ChangeNotifier {
   }
 
   /// 处理文件点击事件
-  Future<void> handleFileTap(FileItem file) async {
+  Future<void> handleFileTap(FileItem file,BuildContext context) async {
     if (isSelectionMode) {
       toggleSelection(files.indexOf(file));
       return;
@@ -61,6 +62,7 @@ class FileProvider extends ChangeNotifier {
       } else if (file.isImage) {
         // TODO: 打开图片查看器
       } else if (file.isVideo) {
+        context.go('/video-player', extra: file); // 使用 GoRouter 进行跳转
         // TODO: 打开视频播放器
       } else {
         // TODO: 其他类型文件的处理

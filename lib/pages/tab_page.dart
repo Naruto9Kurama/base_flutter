@@ -1,4 +1,5 @@
 import 'package:base_flutter/example/pages/login/login_page.dart';
+import 'package:base_flutter/example/pages/video/video_search.dart';
 import 'package:base_flutter/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -77,6 +78,16 @@ class _TabPageState extends State<TabPage> {
       icon: Icons.folder_open_outlined,
       activeIcon: Icons.folder_open,
       label: 'tab.drive',
+      lightSelectedColor: Colors.purple,
+      darkSelectedColor: Colors.purpleAccent,
+      lightUnselectedColor: Colors.grey,
+      darkUnselectedColor: Colors.white70,
+    ),
+    TabItem(
+      page: VideoSearchPage(),
+      icon: Icons.folder_open_outlined,
+      activeIcon: Icons.folder_open,
+      label: 'tab.video_search',
       lightSelectedColor: Colors.purple,
       darkSelectedColor: Colors.purpleAccent,
       lightUnselectedColor: Colors.grey,

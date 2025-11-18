@@ -1,4 +1,5 @@
 import 'package:base_flutter/example/features/drives/respository/ali/ali_file_repository.dart';
+import 'package:base_flutter/example/features/file/models/file/video_file.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../file/models/file/file_item.dart';
@@ -13,6 +14,7 @@ abstract class FileRepository {
 
   Future<List<FileItem>> listFile(FileItem file)  ;
   Future<List<FileItem>> rootFiles(String name)  ;
+  Future<VideoFile> videoPlayInfo(FileItem file)  ;
 
   Future<void> deleteFile(FileItem file) ;
 

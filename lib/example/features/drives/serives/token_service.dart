@@ -1,7 +1,7 @@
 import 'package:base_flutter/core/config/app_config.dart';
 import 'package:base_flutter/core/storage/hive_manager.dart';
 import 'package:base_flutter/example/features/drives/api/ali/ali_file_api.dart';
-import 'package:base_flutter/example/features/drives/models/drive_config.dart';
+import 'package:base_flutter/example/features/drives/models/mount_config.dart';
 import 'package:base_flutter/example/features/drives/models/token.dart';
 import 'package:base_flutter/example/features/drives/serives/drive_service.dart';
 import 'package:base_flutter/example/features/file/enums/file_platform.dart';
@@ -23,10 +23,10 @@ class TokenService {
   }
 
   // 根据平台获取 Token
-  Future<String?> getToken(String mountName) async {
-    DriveService driveService = GetIt.instance<DriveService>();
+  Future<String?> getToken(String mountId) async {
+    MountService driveService = GetIt.instance<MountService>();
 
-    return driveService.getDrive(mountName).then((driveConfig) {
+    return driveService.getMount(mountId).then((driveConfig) {
       switch (driveConfig?.driveType) {
         case null:
           // TODO: Handle this case.

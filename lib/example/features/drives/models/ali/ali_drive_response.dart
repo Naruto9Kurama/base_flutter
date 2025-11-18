@@ -116,22 +116,21 @@ class AliDriveItem {
   Map<String, dynamic> toJson() => _$AliDriveItemToJson(this);
 
   // 将 AliDriveItem 转换为 FileItem
-  FileItem toFileItem(String ssMountName) {
+  FileItem toFileItem(String mountId) {
     return FileItem(
       id: file_id ?? '',
       filename: name ?? '',
       ext: file_extension,
       isDirectory: type == 'folder',
       size: size,
-      mountName: ssMountName
-
+      mountId: mountId
     );
   }
 
   /// 批量转换
   static List<FileItem> toFileItemList(
-      List<AliDriveItem> items,String ssMountName) {
-    return items.map((e) => e.toFileItem(ssMountName)).toList();
+      List<AliDriveItem> items,String mountId) {
+    return items.map((e) => e.toFileItem(mountId)).toList();
   }
 
   /// 工具属性

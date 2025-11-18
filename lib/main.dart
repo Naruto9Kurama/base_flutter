@@ -1,5 +1,5 @@
+import 'package:base_flutter/core/api/dio_client.dart';
 import 'package:base_flutter/core/config/app_config.dart';
-import 'package:base_flutter/example/features/drives/models/token.dart';
 import 'package:base_flutter/hive_registrar.g.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -19,7 +19,11 @@ void main() async {
 
  // 初始化 Hive
   await Hive.initFlutter();
-  Hive.registerAdapters();
+    // 确保适配器只注册一次
+  if (!Hive.isAdapterRegistered(0)) {
+    Hive.registerAdapters(); // 这里是你注册适配器的地方
+  }
+  // Hive.registerAdapters();
 
   // 异步加载配置
   final config = await AppConfig.load();
@@ -28,7 +32,9 @@ void main() async {
 
   // setupDI(); // 注册 DI
   configureDependencies();
-
+  
+  GetIt.instance.get<DioClient>().setProxyPrefix('http://kurama-server:14056');
+  
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('zh')],

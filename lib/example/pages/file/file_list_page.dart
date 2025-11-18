@@ -27,7 +27,7 @@ class _FileListPageState extends State<FileListPage> {
       id: 'root',
       filename: '根目录',
       isDirectory: true,
-      mountName: '',
+      mountId: '',
     );
     pathStack.clear();
     pathStack.add(fileItem);
@@ -46,7 +46,7 @@ class _FileListPageState extends State<FileListPage> {
         await _fileProvider.loadFiles(tapped);
       }
     } else {
-      _fileProvider.handleFileTap(tapped);
+      _fileProvider.handleFileTap(tapped,context);
     }
   }
 

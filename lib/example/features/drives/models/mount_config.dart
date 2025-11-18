@@ -1,14 +1,14 @@
 
-
 import 'package:hive_ce/hive.dart';
+import 'package:uuid/uuid.dart';
 import 'package:base_flutter/example/features/file/enums/file_platform.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'drive_config.g.dart';
+part 'mount_config.g.dart';
 
 @HiveType(typeId: 2)
 @JsonSerializable()
-class DriveConfig extends HiveObject {
+class MountConfig extends HiveObject {
   @HiveField(0)
   final FilePlatform driveType;
 
@@ -19,19 +19,25 @@ class DriveConfig extends HiveObject {
   final Map<String, dynamic> config;
 
   @HiveField(3)
-  final String key;
+  final String id;
 
-  DriveConfig({
+  // // id字段：动态生成
+  // @HiveField(4)
+  // final String id;
+
+  MountConfig({
     required this.driveType,
     required this.name,
     required this.config,
-    required this.key,
-  });
+    // required this.id,
+    String? id, // 可选传入
+  }) : id = id ?? const Uuid().v4(); // 如果没传就生成 UUID
 
-
-  factory DriveConfig.fromJson(Map<String, dynamic> json) => _$DriveConfigFromJson(json);
-  Map<String, dynamic> toJson() => _$DriveConfigToJson(this);
+  factory MountConfig.fromJson(Map<String, dynamic> json) =>
+      _$MountConfigFromJson(json);
+  Map<String, dynamic> toJson() => _$MountConfigToJson(this);
 }
+
 
 
 // @freezed

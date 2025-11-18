@@ -1,6 +1,6 @@
 // screens/drive_type_selector_screen.dart
 import 'package:base_flutter/example/pages/drive/add_drive_page.dart';
-import 'package:base_flutter/example/features/drives/models/drive_config.dart';
+import 'package:base_flutter/example/features/drives/models/mount_config.dart';
 import 'package:base_flutter/example/pages/drive/models/drive_config_base_template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -8,7 +8,7 @@ import 'template/ali_template.dart';
 
 
 class DriveTypeSelectorScreen extends StatelessWidget {
-  final Function(DriveConfig) onDriveAdded;
+  final Function(MountConfig) onDriveAdded;
 
   const DriveTypeSelectorScreen({
     super.key,

@@ -1,5 +1,5 @@
 import 'package:base_flutter/example/features/file/enums/file_platform.dart';
-import 'package:base_flutter/example/features/drives/models/drive_config.dart';
+import 'package:base_flutter/example/features/drives/models/mount_config.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -16,7 +16,7 @@ abstract class DriveConfigBaseTemplate with _$DriveConfigBaseTemplate {
     required String description,
     required IconData icon,
     required  List<DriveConfigField> fields,
-    required Function(DriveConfig) onSave, //点击保存回调方法,return返回空字符则代表保存成功
+    required Function(MountConfig) onSave, //点击保存回调方法,return返回空字符则代表保存成功
     Color? primaryColor,
   })= _DriveConfigBaseTemplate;
 }

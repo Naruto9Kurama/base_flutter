@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import '../../features/file/models/file/file_item.dart';
 import '../../utils/file/file_icon.dart';
 import '../../utils/file/file_size_formatter.dart';
@@ -109,7 +108,7 @@ class FileListItem extends StatelessWidget {
                 ],
                 onSelected: (value) async {
                   final provider = GetIt.instance<FileProvider>();
-
+                  
                   if (value == 'delete') {
                     provider.deleteFile(file);
                   } else if (value == 'rename') {

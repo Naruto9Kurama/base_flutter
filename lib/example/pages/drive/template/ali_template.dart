@@ -2,7 +2,7 @@
 import 'package:base_flutter/core/config/app_config.dart';
 import 'package:base_flutter/core/storage/hive_manager.dart';
 import 'package:base_flutter/example/constants/hive_boxes.dart';
-import 'package:base_flutter/example/features/drives/models/drive_config.dart';
+import 'package:base_flutter/example/features/drives/models/mount_config.dart';
 import 'package:base_flutter/example/features/drives/serives/drive_service.dart';
 import 'package:base_flutter/example/features/file/enums/file_platform.dart';
 import 'package:base_flutter/example/pages/drive/models/drive_config_base_template.dart';
@@ -116,8 +116,8 @@ class AliyunDriveTemplate {
       ),
     ],
     onSave:  (updatedConfig) async {
-      DriveService service=GetIt.instance<DriveService>();
-      service.saveDrive(updatedConfig);
+      MountService service=GetIt.instance<MountService>();
+      service.saveMount(updatedConfig);
       return "";
     }
   );

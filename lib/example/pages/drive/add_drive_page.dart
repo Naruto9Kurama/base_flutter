@@ -1,5 +1,5 @@
 // screens/add_drive_screen.dart
-import 'package:base_flutter/example/features/drives/models/drive_config.dart';
+import 'package:base_flutter/example/features/drives/models/mount_config.dart';
 import 'package:base_flutter/example/pages/drive/models/drive_config_base_template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,8 +13,8 @@ import 'dart:math';
 
 class AddDriveScreen extends StatefulWidget {
   final DriveConfigBaseTemplate template;
-  final Function(DriveConfig) onSave;
-  final DriveConfig? existingConfig; // 用于编辑现有配置
+  final Function(MountConfig) onSave;
+  final MountConfig? existingConfig; // 用于编辑现有配置
 
   const AddDriveScreen({
     super.key,
@@ -167,8 +167,8 @@ class _AddDriveScreenState extends State<AddDriveScreen> {
   }
 
   Widget _buildNameField() {
-    return FutureBuilder<List<DriveConfig>>(
-      future: GetIt.instance.get<DriveService>().getAllDrive(),
+    return FutureBuilder<List<MountConfig>>(
+      future: GetIt.instance.get<MountService>().getAllMount(),
       builder: (context, snapshot) {
         final existingMountNames = snapshot.data?.map((e) => e.name).toSet() ?? {};
         return FormBuilderTextField(
@@ -351,14 +351,12 @@ class _AddDriveScreenState extends State<AddDriveScreen> {
       final formData = _formKey.currentState!.value;
       final name = formData['name'] as String;
       final config = Map<String, dynamic>.from(formData)..remove('name');
-      String key;
+      String mountId='';
       if (widget.existingConfig != null) {
-        key = widget.existingConfig!.key;
-      } else {
-        key = _randomString(16);
-      }
-      final driveConfig = DriveConfig(
-        key: key,
+        mountId = widget.existingConfig!.id;
+      } 
+      final driveConfig = MountConfig(
+        id: mountId,
         driveType: widget.template.driveType,
         name: name,
         config: config,
@@ -390,9 +388,5 @@ class _AddDriveScreenState extends State<AddDriveScreen> {
     }
   }
 
-  String _randomString(int length) {
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    final rand = Random.secure();
-    return List.generate(length, (_) => chars[rand.nextInt(chars.length)]).join();
-  }
+
 }

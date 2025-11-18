@@ -7,7 +7,7 @@ import 'package:base_flutter/example/features/file/enums/file_platform.dart';
 import 'package:base_flutter/example/pages/drive/add_drive_page.dart';
 import 'package:base_flutter/example/pages/drive/template/ali_template.dart';
 import 'package:base_flutter/example/pages/drive/drive_type_page.dart';
-import 'package:base_flutter/example/features/drives/models/drive_config.dart';
+import 'package:base_flutter/example/features/drives/models/mount_config.dart';
 import 'package:base_flutter/example/pages/drive/models/drive_config_base_template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -20,16 +20,16 @@ class DriveMainScreen extends StatefulWidget {
 }
 
 class _DriveMainScreenState extends State<DriveMainScreen> {
-  final List<DriveConfig> _drives = [];
+  final List<MountConfig> _drives = [];
 
 
   @override
   void initState() {
     super.initState();
-    HiveManager.openBox<DriveConfig>(HiveBoxes.driveConfig).then((box)=>{
+    HiveManager.openBox<MountConfig>(HiveBoxes.driveConfig).then((box)=>{
       setState(() {
         _drives.clear();
-        _drives.addAll(HiveManager.getAll<DriveConfig>(box));
+        _drives.addAll(HiveManager.getAll<MountConfig>(box));
       })
     });
   }
@@ -95,7 +95,7 @@ class _DriveMainScreenState extends State<DriveMainScreen> {
     );
   }
 
-  Widget _buildDriveCard(DriveConfig drive) {
+  Widget _buildDriveCard(MountConfig drive) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
@@ -141,7 +141,7 @@ class _DriveMainScreenState extends State<DriveMainScreen> {
   }
 
 
-  DriveConfigBaseTemplate? getTemplate(DriveConfig drive){
+  DriveConfigBaseTemplate? getTemplate(MountConfig drive){
     DriveConfigBaseTemplate? template;
     switch (drive.driveType) {
       case FilePlatform.aliyun:
@@ -164,7 +164,7 @@ class _DriveMainScreenState extends State<DriveMainScreen> {
     return template;
   }
   void _showAddDriveScreen() {
-    var template = getTemplate(DriveConfig(key:'',driveType: FilePlatform.aliyun, name: "111", config: {}));
+    var template = getTemplate(MountConfig(id:'',driveType: FilePlatform.aliyun, name: "111", config: {}));
     Navigator.of(context).push(
       platformPageRoute(
         context: context,
@@ -195,7 +195,7 @@ class _DriveMainScreenState extends State<DriveMainScreen> {
     );
   }
 
-  void _editDrive(DriveConfig drive) {
+  void _editDrive(MountConfig drive) {
     // 根据驱动器类型获取对应的模板
     DriveConfigBaseTemplate? template=getTemplate(drive);
 
@@ -239,7 +239,7 @@ class _DriveMainScreenState extends State<DriveMainScreen> {
     );
   }
 
-  void _deleteDrive(DriveConfig drive) {
+  void _deleteDrive(MountConfig drive) {
     showPlatformDialog(
       context: context,
       builder: (context) => PlatformAlertDialog(
@@ -268,7 +268,7 @@ class _DriveMainScreenState extends State<DriveMainScreen> {
     );
   }
 
-  void _openDrive(DriveConfig drive) {
+  void _openDrive(MountConfig drive) {
     // 打开驱动器，显示文件列表
     // 这里可以导航到文件浏览界面
     Navigator.of(context).push(

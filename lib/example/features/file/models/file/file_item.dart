@@ -1,5 +1,5 @@
 // models/file_item.dart
-import 'package:base_flutter/example/features/drives/models/drive_config.dart';
+import 'package:base_flutter/example/features/drives/models/mount_config.dart';
 import 'package:base_flutter/example/features/file/enums/file_platform.dart';
 import 'package:base_flutter/example/features/drives/models/ali/ali_drive_response.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -11,19 +11,21 @@ class FileItem {
   final String id;
   String filename;
   final bool isDirectory;
-  final String mountName;
+  final String mountId;
   final String? ext;
   final int? size; // 字节
   final DateTime? modifiedAt;
+  final String? fileUrl;
 
   FileItem({
     required this.id,
     required this.filename,
     required this.isDirectory,
-    required this.mountName,
+    required this.mountId,
     this.ext,
     this.size,
     this.modifiedAt,
+    this.fileUrl,
   });
 
   factory FileItem.fromJson(Map<String, dynamic> json) =>
@@ -73,8 +75,8 @@ class FileItem {
 
   static List<FileItem> toFileItemList(
     List<AliDriveItem> items,
-    String ssMountName,
+    String mountId,
   ) {
-    return items.map((e) => e.toFileItem(ssMountName)).toList();
+    return items.map((e) => e.toFileItem(mountId)).toList();
   }
 }
