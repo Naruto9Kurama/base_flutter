@@ -1,6 +1,4 @@
 // models/file_item.dart
-import 'package:base_flutter/example/features/drives/models/mount_config.dart';
-import 'package:base_flutter/example/features/file/enums/file_platform.dart';
 import 'package:base_flutter/example/features/drives/models/ali/ali_drive_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 

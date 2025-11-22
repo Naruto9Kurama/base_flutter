@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:base_flutter/example/features/video/models/video_model.dart';
+import 'package:base_flutter/example/features/base/models/video/video_model.dart';
 
 // 视频列表项组件类
 class VideoListItem extends StatelessWidget {
@@ -118,7 +118,7 @@ class VideoListItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  video.author,
+                  video.title,
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.grey[600],

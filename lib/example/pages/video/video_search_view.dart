@@ -2,9 +2,10 @@
 import 'package:base_flutter/example/pages/video/video_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../features/video/provider/video_search_provider.dart';
-import '../../features/video/models/video_model.dart';
+import '../../features/base/models/video/video_model.dart';
 
 
 // 视频搜索视图
@@ -27,6 +28,7 @@ class _VideoSearchViewState extends State<VideoSearchView> {
   // 搜索按钮点击事件
   void _onSearchButtonPressed(BuildContext context) {
     final provider = context.read<VideoSearchProvider>();
+    // _showMessage(context, '点击了搜索');
     provider.searchVideos(_searchController.text.trim());
   }
 
@@ -40,9 +42,10 @@ class _VideoSearchViewState extends State<VideoSearchView> {
     //     builder: (context) => VideoPlayerPage(videoId: video.id),
     //   ),
     // );
+    // _showMessage(context, '点击了视频: ${video.playUrls}');
+    context.go('/video-player', extra: video);
 
-    _showMessage(context, '点击了视频: ${video.title}');
-    print('视频ID: ${video.id}');
+    // print('视频ID: ${video.id}');
   }
 
   // 显示提示信息

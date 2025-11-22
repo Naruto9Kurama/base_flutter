@@ -1,8 +1,10 @@
 import 'package:base_flutter/core/di/injection.dart';
+import 'package:base_flutter/example/features/base/models/video/video_model.dart';
 import 'package:base_flutter/example/features/file/models/file/file_item.dart';
 import 'package:base_flutter/example/features/file/providers/file_item/file_item_provider.dart';
+import 'package:base_flutter/example/features/video/provider/video_player_provider.dart';
 import 'package:base_flutter/example/pages/drive/drive_main_page.dart';
-import 'package:base_flutter/example/pages/file/video/video_player_screen.dart';
+import 'package:base_flutter/example/pages/video/video_player_screen.dart';
 import 'package:base_flutter/example/pages/login/login_page.dart';
 import 'package:base_flutter/example/pages/video/video_search.dart';
 import 'package:base_flutter/pages/tab_page.dart';
@@ -32,10 +34,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/video-player',
       builder: (context, state) {
-        final FileItem fileItem = state.extra as FileItem; // 获取传递的 videoUrl
-        FileItemProvider _fileItemProvider = getIt<FileItemProvider>();
-        _fileItemProvider.setFileItem( fileItem);
-        return VideoPlayerScreen(fileItemProvider:_fileItemProvider);
+        final VideoModel videoModel = state.extra as VideoModel; // 获取传递的 videoUrl
+        VideoPlayerProvider _videoPlayerProvider = getIt<VideoPlayerProvider>();
+        _videoPlayerProvider.setVideoModel( videoModel);
+        return VideoPlayerScreen(videoPlayerProvider:_videoPlayerProvider);
       },
     ),
     GoRoute(

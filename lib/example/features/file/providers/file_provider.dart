@@ -62,7 +62,7 @@ class FileProvider extends ChangeNotifier {
       } else if (file.isImage) {
         // TODO: 打开图片查看器
       } else if (file.isVideo) {
-        context.go('/video-player', extra: file); // 使用 GoRouter 进行跳转
+        // context.go('/video-player', extra: file); // 使用 GoRouter 进行跳转
         // TODO: 打开视频播放器
       } else {
         // TODO: 其他类型文件的处理

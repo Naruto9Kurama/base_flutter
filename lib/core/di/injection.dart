@@ -1,12 +1,4 @@
-import 'package:base_flutter/example/features/drives/respository/file_repository.dart';
 import 'package:get_it/get_it.dart';
-import 'package:dio/dio.dart';
-import '../api/dio_client.dart';
-import '../providers/theme_provider.dart';
-import '../providers/locale_provider.dart';
-import '../api/auth/auth_api.dart';
-import '../../example/features/file/providers/file_provider.dart';
-
 import 'package:injectable/injectable.dart';
 import 'injection.config.dart';
 final getIt = GetIt.instance;
@@ -37,6 +29,7 @@ final getIt = GetIt.instance;
 
 
 @InjectableInit()
-void configureDependencies() {
+void configureDependencies(Function fun) {
   getIt.init(); // <- 注意这里不是 $initGetIt
+  fun(getIt);
 }

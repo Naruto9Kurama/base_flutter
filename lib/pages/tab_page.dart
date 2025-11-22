@@ -6,7 +6,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import '../core/providers/theme_provider.dart';
 import '../example/pages/file/file_list_page.dart';
-import '../example/features/file/models/file/file_item.dart';
 import 'package:base_flutter/example/pages/drive/drive_main_page.dart';
 class TabItem {
   final Widget page;
@@ -84,7 +83,7 @@ class _TabPageState extends State<TabPage> {
       darkUnselectedColor: Colors.white70,
     ),
     TabItem(
-      page: VideoSearchPage(),
+      page:  VideoSearchPage(),
       icon: Icons.folder_open_outlined,
       activeIcon: Icons.folder_open,
       label: 'tab.video_search',

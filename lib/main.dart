@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:base_flutter/core/api/dio_client.dart';
 import 'package:base_flutter/core/config/app_config.dart';
+import 'package:base_flutter/example/features/video/respository/vod/base_vod_respository.dart';
+import 'package:base_flutter/example/features/video/respository/vod_respository.dart';
 import 'package:base_flutter/hive_registrar.g.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_ce/hive.dart'; // 用于 Hive 存储的核心库
@@ -31,10 +36,29 @@ void main() async {
   GetIt.instance.registerSingleton<AppConfig>(config);
 
   // setupDI(); // 注册 DI
-  configureDependencies();
+  configureDependencies((getit)=>{
+    //todo 根据配置的vod url注册实例
+    // getIt.registerLazySingleton<VodRespository>(() => BaseVodRespository(baseUrl: "http://cj.ffzyapi.com/",appConfig:config),instanceName: 'feifan')
+  });
   
-  GetIt.instance.get<DioClient>().setProxyPrefix('http://kurama-server:14056');
-  
+
+   bool enableProxy = false;
+  Map<String,dynamic> proxyConfig = config["proxy"]; 
+  if (kIsWeb) {
+    enableProxy = proxyConfig["web"] ?? false;
+  } else if (Platform.isAndroid) {
+    enableProxy = proxyConfig["android"] ?? false;
+  } else if (Platform.isIOS) {
+    enableProxy = proxyConfig["ios"] ?? false;
+  }
+
+  if (enableProxy && proxyConfig["url"] != null) {
+    final dioClient = GetIt.instance.get<DioClient>();
+    dioClient.setProxyPrefix(proxyConfig["url"]);
+    print("Proxy enabled: ${proxyConfig["url"]}");
+  } else {
+    print("Proxy not enabled for this platform");
+  }
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('zh')],
