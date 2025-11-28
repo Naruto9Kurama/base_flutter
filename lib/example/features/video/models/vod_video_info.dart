@@ -34,6 +34,9 @@ class VodVideoInfo {
   @JsonKey(name: 'vod_blurb')
   final String? vodBlurb; // 改为可空
 
+  @JsonKey(name: 'vod_content')
+  final String? vodContent; // 改为可空
+
   @JsonKey(name: 'vod_play_url')
   final String? vodPlayUrl; // 改为可空
 
@@ -48,6 +51,7 @@ class VodVideoInfo {
     this.vodPlayFrom,
     this.vodPic,
     this.vodBlurb,
+    this.vodContent,
     this.vodPlayUrl,
   });
 

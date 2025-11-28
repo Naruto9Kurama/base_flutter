@@ -42,6 +42,8 @@ class BaseVodRespository extends VodRespository {
           duration: "0",
           thumbnail: "",
           vodPlayUrl: video.vodPlayUrl ?? '',
+          pic: video.vodPic,
+          detail:video.vodContent,
           from: vodFromName,
         );
       }).toList();
@@ -62,6 +64,8 @@ class BaseVodRespository extends VodRespository {
         duration: "0",
         thumbnail: "",
         vodPlayUrl: video.vodPlayUrl ?? '',
+        pic: video.vodPic,
+        detail:video.vodContent,
         from: vodFromName,
       );
     });

@@ -1,11 +1,13 @@
-
-import 'package:base_flutter/example/pages/video/video_list_item.dart';
+import 'package:base_flutter/example/pages/video/search/video_list_item.dart';
+import 'package:base_flutter/example/pages/video/player/video_player_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../features/video/provider/video_search_provider.dart';
-import '../../features/base/models/video/video_model.dart';
+import 'package:get_it/get_it.dart';
+import '../../../../core/config/app_config.dart';
+import '../../../features/video/provider/video_search_provider.dart';
+import '../../../features/base/models/video/video_model.dart';
 
 
 // 视频搜索视图
@@ -18,6 +20,8 @@ class VideoSearchView extends StatefulWidget {
 
 class _VideoSearchViewState extends State<VideoSearchView> {
   final TextEditingController _searchController = TextEditingController();
+  List<String> _vodOptions = [];
+  String _selectedVod = '';
 
   @override
   void dispose() {
@@ -25,44 +29,42 @@ class _VideoSearchViewState extends State<VideoSearchView> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    // 从 AppConfig 中读取 vod 源配置
+    try {
+      final appConfig = GetIt.instance.get<AppConfig>();
+      final vodMap = appConfig['vod'] as Map<String, dynamic>?;
+      if (vodMap != null && vodMap.isNotEmpty) {
+        _vodOptions = vodMap.keys.toList();
+        _selectedVod = _vodOptions.first;
+      }
+    } catch (e) {
+      // 忽略，保留默认
+    }
+  }
+
   // 搜索按钮点击事件
   void _onSearchButtonPressed(BuildContext context) {
     final provider = context.read<VideoSearchProvider>();
-    // _showMessage(context, '点击了搜索');
-    provider.searchVideos(_searchController.text.trim());
+    // 使用选中的视频源进行搜索
+    provider.searchVideos(_selectedVod.isNotEmpty ? _selectedVod : 'jy', _searchController.text.trim());
   }
 
   // 视频项点击事件 - 预留给实际的视频播放逻辑
   void _onVideoItemTapped(BuildContext context, VideoModel video) {
-    // TODO: 在这里添加视频点击后的逻辑
-    // 示例：
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => VideoPlayerPage(videoId: video.id),
-    //   ),
-    // );
-    // _showMessage(context, '点击了视频: ${video.playUrls}');
-    context.go('/video-player', extra: video);
-
-    // print('视频ID: ${video.id}');
-  }
-
-  // 显示提示信息
-  void _showMessage(BuildContext context, String message) {
-    showPlatformDialog(
-      context: context,
-      builder: (_) => PlatformAlertDialog(
-        title: const Text('提示'),
-        content: Text(message),
-        actions: [
-          PlatformDialogAction(
-            child: const Text('确定'),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
-    );
+    final episodeList = video.playUrls
+        .map((play) => play.url)
+        .where((url) => url.isNotEmpty)
+        .toList();
+    if (episodeList.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('该视频暂无可用播放源')),
+      );
+      return;
+    }
+    context.push('/video-player',extra: video);
   }
 
   @override
@@ -71,18 +73,81 @@ class _VideoSearchViewState extends State<VideoSearchView> {
       appBar: PlatformAppBar(
         title: const Text('视频搜索'),
       ),
-      body: Column(
-        children: [
-          _SearchBar(
-            controller: _searchController,
-            onSearch: () => _onSearchButtonPressed(context),
+      body: SafeArea(
+        child: Container(
+          color: Colors.grey[50],
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: _SearchBar(
+                  controller: _searchController,
+                  onSearch: () => _onSearchButtonPressed(context),
+                ),
+              ),
+              if (_vodOptions.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Text('视频源：', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: _vodOptions.map((key) {
+                                final selected = key == _selectedVod;
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: ChoiceChip(
+                                    backgroundColor: Colors.grey[100],
+                                    selectedColor: Theme.of(context).primaryColor,
+                                    label: Text(
+                                      key,
+                                      style: TextStyle(color: selected ? Colors.white : Colors.black87),
+                                    ),
+                                    selected: selected,
+                                    onSelected: (v) {
+                                      setState(() {
+                                        _selectedVod = key;
+                                        _onSearchButtonPressed(context);
+                                      });
+                                    },
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              // 列表区域
+              Expanded(
+                child: _VideoListContent(
+                  onVideoTap: (video) => _onVideoItemTapped(context, video),
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: _VideoListContent(
-              onVideoTap: (video) => _onVideoItemTapped(context, video),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -187,13 +252,46 @@ class _SearchBar extends StatelessWidget {
 }
 
 // 视频列表内容组件
-class _VideoListContent extends StatelessWidget {
+class _VideoListContent extends StatefulWidget {
   final Function(VideoModel) onVideoTap;
 
   const _VideoListContent({
     Key? key,
     required this.onVideoTap,
   }) : super(key: key);
+
+  @override
+  State<_VideoListContent> createState() => _VideoListContentState();
+}
+
+class _VideoListContentState extends State<_VideoListContent> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final provider = context.read<VideoSearchProvider>();
+    if (!_scrollController.hasClients) return;
+    final threshold = 200.0; // 距离底部阈值
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final current = _scrollController.position.pixels;
+    if (maxScroll - current <= threshold) {
+      // 触发加载下一页
+      provider.loadNextPage();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -252,14 +350,26 @@ class _VideoListContent extends StatelessWidget {
         }
 
         // 视频列表
+        final itemCount = provider.videoList.length + (provider.isLoadingMore ? 1 : 0);
         return ListView.builder(
-          itemCount: provider.videoList.length,
+          controller: _scrollController,
+          itemCount: itemCount,
           padding: const EdgeInsets.all(8),
           itemBuilder: (context, index) {
-            return VideoListItem(
-              video: provider.videoList[index],
-              onTap: () => onVideoTap(provider.videoList[index]),
-            );
+            if (index < provider.videoList.length) {
+              return VideoListItem(
+                video: provider.videoList[index],
+                onTap: () => widget.onVideoTap(provider.videoList[index]),
+              );
+            } else {
+              // 底部加载指示器
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Center(
+                  child: PlatformCircularProgressIndicator(),
+                ),
+              );
+            }
           },
         );
       },

@@ -1,5 +1,5 @@
 import 'package:base_flutter/example/pages/login/login_page.dart';
-import 'package:base_flutter/example/pages/video/video_search.dart';
+import 'package:base_flutter/example/pages/video/search/video_search.dart';
 import 'package:base_flutter/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../core/providers/theme_provider.dart';
 import '../example/pages/file/file_list_page.dart';
 import 'package:base_flutter/example/pages/drive/drive_main_page.dart';
+import 'package:get_it/get_it.dart';
 class TabItem {
   final Widget page;
   final IconData icon;

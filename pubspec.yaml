@@ -58,6 +58,18 @@ dependencies:
   video_player: ^2.10.1
   chewie: ^1.13.0
   shelf_router: ^1.1.4
+  media_kit: ^1.2.2
+  media_kit_video: ^2.0.0
+  # Native libs for media_kit on Android. Required to include libmpv/libibmpv and helpers.
+  media_kit_libs_android_video: any
+  extended_nested_scroll_view: ^6.2.1
+  floating: ^6.0.0
+  permission_handler: ^12.0.1
+  # image_gallery_saver: ^2.0.3
+  # fluttertoast: ^9.0.0
+  # screen_brightness: ^2.1.7
+  # volume_controller: ^3.4.0
+  fvp: ^0.35.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

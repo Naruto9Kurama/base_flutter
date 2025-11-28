@@ -28,8 +28,12 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // Ensure common ABIs are packaged so native libs like libibmpv.so are available
+        //ndk {
+        //    // include common ABIs; adjust as needed for your target devices
+        //    abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
+        //}
     }
-
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -37,6 +41,16 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    // Ensure native libraries are preserved when packaging (helps with some AGP/Flutter integrations)
+    //packagingOptions {
+    //    jniLibs {
+    //        // Use legacy packaging to avoid unexpected stripping of .so in some build pipelines
+    //        useLegacyPackaging = true
+    //    }
+    //    // If multiple copies exist, prefer the first found for these libs
+    //    pickFirst("**/libibmpv.so")
+    //    pickFirst("**/libmpv.so")
+    //}
 }
 
 flutter {

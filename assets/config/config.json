@@ -9,8 +9,12 @@
   },
   "vod":{
     "jy":{
-      "searchUrl":"https://jyzyapi.com/provide/vod/from/jinyingm3u8/at/json?ac=videoList&wd={wd}&pg={pg}&limit={limit}",
+      "searchUrl":"https://jyzyapi.com/provide/vod/from/jinyingm3u8/at/json?ac=videolist&wd={wd}&pg={pg}&limit={limit}",
       "detailUrl":"https://jyzyapi.com/provide/vod/from/jinyingm3u8/at/json?ac=detail&ids={ids}"
+    },
+    "ff":{
+      "searchUrl":"http://cj.ffzyapi.com/api.php/provide/vod?ac=videolist&wd={wd}&pg={pg}&limit={limit}",
+      "detailUrl":"http://cj.ffzyapi.com/api.php/provide/vod?ac=detail&ids={ids}"
     }
   },
   "proxy":{

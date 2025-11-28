@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 
 import 'dart:convert';
 
-@LazySingleton()
+// @LazySingleton()
 class VideoPlayerProvider extends ChangeNotifier {
   late VideoModel videoModel;
   BaseVodRespository baseVodRespository = GetIt.instance

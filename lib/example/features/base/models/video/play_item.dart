@@ -8,8 +8,8 @@ part 'play_item.g.dart';
 class PlayItem {
   final String name;
   final String url;
-
-  PlayItem(this.name, this.url);
+  final String episode;
+  PlayItem(this.name, this.url,this.episode);
 
       factory PlayItem.fromJson(Map<String, dynamic> json) =>
       _$PlayItemFromJson(json);

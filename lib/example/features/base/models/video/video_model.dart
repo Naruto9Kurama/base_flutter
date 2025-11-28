@@ -10,6 +10,8 @@ class VideoModel {
   final String title;
   final String thumbnail;
   final String duration;
+  final String? pic;
+  final String? detail;
   final String from;
 
   @JsonKey(ignore: true)  // 忽略 JSON 序列化时的反序列化
@@ -20,7 +22,7 @@ class VideoModel {
     if (_vodPlayUrl == null || _vodPlayUrl.isEmpty) {
       return [];  // 如果没有数据，返回空列表
     }
-    return _parseVodPlayUrl(_vodPlayUrl);
+    return _parseVodPlayUrl(title,_vodPlayUrl);
   }
 
   VideoModel({
@@ -29,6 +31,8 @@ class VideoModel {
     required this.thumbnail,
     required this.duration,
     String? vodPlayUrl, // 可选的 vodPlayUrl 字段
+    this.pic,
+    this.detail,
     required this.from, // 可选的 vodPlayUrl 字段
   }) : _vodPlayUrl = vodPlayUrl;  // 直接传入 vodPlayUrl，保持 null 可用
 
@@ -38,7 +42,7 @@ class VideoModel {
   Map<String, dynamic> toJson() => _$VideoModelToJson(this);
 
   // 静态工具方法，避免实例化前调用问题
-  static List<PlayItem> _parseVodPlayUrl(String vodPlayUrl) {
+  static List<PlayItem> _parseVodPlayUrl(String title,String vodPlayUrl) {
     print(vodPlayUrl);
     return vodPlayUrl
         .split('#') // 每一集
@@ -46,7 +50,7 @@ class VideoModel {
         .map((e) {
           final parts = e.split('\$');
           if (parts.length < 2) return null;
-          return PlayItem(parts[0], parts[1]); // 返回 PlayItem
+          return PlayItem(title, parts[1],parts[0]); // 返回 PlayItem
         })
         .whereType<PlayItem>() // 过滤 null 值
         .toList();
