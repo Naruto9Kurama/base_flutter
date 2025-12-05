@@ -46,17 +46,16 @@ class VideoSearchProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // 模拟搜索结果数据
-      getIt
+      // 使用 await 替代 .then() 以便能捕获异常
+      final onValue = await getIt
           .get<BaseVodRespository>()
-          .searchVideo(vodFrom, keyword, _currentPage, _pageSize)
-          .then((onValue) {
-            _videoList = onValue;
-            _isLoading = false;
-            // 如果返回条数等于 pageSize，则可能还有更多
-            _hasMore = onValue.length >= _pageSize;
-            notifyListeners();
-          });
+          .searchVideo(vodFrom, keyword, _currentPage, _pageSize);
+      
+      _videoList = onValue;
+      _isLoading = false;
+      // 如果返回条数等于 pageSize，则可能还有更多
+      _hasMore = onValue.length >= _pageSize;
+      notifyListeners();
     } catch (e) {
       _isLoading = false;
       _errorMessage = '搜索失败: $e';

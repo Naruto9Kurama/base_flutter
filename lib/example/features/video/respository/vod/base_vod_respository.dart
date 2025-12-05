@@ -29,7 +29,10 @@ class BaseVodRespository extends VodRespository {
     int limit,
   ) {
     Map<String, dynamic> map = _appConfig['vod'][vodFromName];
-    String searchUrl = map['searchUrl'];
+    String? searchUrl = map['searchUrl'] as String?;
+    if(searchUrl == null || searchUrl.isEmpty){
+      searchUrl = "${map['baseUrl']}?ac=videolist&wd={wd}&pg={pg}&limit={limit}";
+    }
     print(map);
     print(searchUrl);
     return _vodBaseApi.getVideoList(searchUrl, wd, pg, limit).then((videoList) {
@@ -52,7 +55,10 @@ class BaseVodRespository extends VodRespository {
 
   Future<VideoModel> videoDetail(String vodFromName, String id) {
     Map<String, dynamic> map = _appConfig['vod'][vodFromName];
-    String detailUrl = map['detailUrl'];
+    String? detailUrl = map['detailUrl'] as String?;
+    if(detailUrl == null || detailUrl.isEmpty){
+      detailUrl = "${map['baseUrl']}?ac=detail&ids={ids}";
+    }
     return _vodBaseApi.getVideoDetail(detailUrl, id).then((videoList) {
       // print("111111111111111111111111");
       VodVideoInfo video = videoList.list[0];

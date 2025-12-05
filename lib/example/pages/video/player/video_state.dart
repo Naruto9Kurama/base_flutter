@@ -17,6 +17,23 @@ class VideoControllerState extends ChangeNotifier { // 视频控制器状态，�
   Duration duration = Duration.zero; // 视频总时长
   bool isBuffering = false; // 缓冲状态
   bool showEpisodeList = false; // 选集面板显示状态
+  // Seeking / Drag preview
+  bool isSeeking = false; // 是否正在滑动进度
+  Duration? seekPreviewPosition; // 滑动时的预览位置
+  Duration? _seekStartPosition;
+  double? _dragStartX;
+  bool _isSeeking = false; // 是否正在 seek（用于锁定进度条显示）
+  Timer? _seekLockTimer; // seek 锁定计时器
+  Duration? _lastSeekTarget; // 上次 seek 的目标位置（用于 UI 显示）
+
+  // Long press speed preview
+  bool isLongPressing = false;
+  double longPressSpeed = 2.0;
+  double? _speedBeforeLongPress;
+
+  // Play/pause indicator overlay
+  bool showPlayPauseIndicator = false;
+  Timer? _playPauseTimer;
 
   Timer? _hideTimer; // 控制条自动隐藏计时器
   StreamSubscription<bool>? _playingSubscription; // 播放状态订阅
@@ -73,7 +90,16 @@ class VideoControllerState extends ChangeNotifier { // 视频控制器状态，�
   } // 方法结束
 
   void seek(Duration position) { // 跳转进度
+    _lastSeekTarget = position; // 记录目标位置用于 UI 锁定显示
+    _isSeeking = true; // 锁定进度条
+    _seekLockTimer?.cancel();
+    _seekLockTimer = Timer(const Duration(milliseconds: 500), () {
+      _isSeeking = false;
+      _lastSeekTarget = null;
+      notifyListeners();
+    });
     player.seek(position); // 调用播放器
+    notifyListeners(); // 通知 UI 更新锁定状态
   } // 方法结束
 
   void showControlsTemporarily() { // 临时显示控制条
@@ -94,6 +120,87 @@ class VideoControllerState extends ChangeNotifier { // 视频控制器状态，�
       showControlsTemporarily(); // 重置隐藏计时
     } // 结束 if
   } // 方法结束
+
+  // --- Drag / seek handling moved into state ---
+  void onHorizontalDragStart(double globalX) {
+    print('🔍 onHorizontalDragStart: globalX=$globalX');
+    _dragStartX = globalX;
+    _seekStartPosition = position;
+    isSeeking = true;
+    seekPreviewPosition = position;
+    print('✅ isSeeking=$isSeeking, seekPreviewPosition=$seekPreviewPosition');
+    notifyListeners();
+  }
+
+  void onHorizontalDragUpdate(double globalX, double screenWidth) {
+    if (!isSeeking || _dragStartX == null || _seekStartPosition == null) return;
+    final double dragDistance = globalX - _dragStartX!;
+    // 每滑动屏幕宽度的1/10，调整10秒 (和旧逻辑保持一致)
+    final int seconds = (dragDistance / (screenWidth / 10) * 10).round();
+    final Duration newPosition = _seekStartPosition! + Duration(seconds: seconds);
+    if (newPosition < Duration.zero) {
+      seekPreviewPosition = Duration.zero;
+    } else if (newPosition > duration) {
+      seekPreviewPosition = duration;
+    } else {
+      seekPreviewPosition = newPosition;
+    }
+    print('🔄 onHorizontalDragUpdate: dragDistance=$dragDistance, seconds=$seconds, seekPos=${seekPreviewPosition?.inSeconds}s');
+    notifyListeners();
+  }
+
+  void onHorizontalDragEnd() {
+    if (isSeeking && seekPreviewPosition != null) {
+      seek(seekPreviewPosition!);
+    }
+    isSeeking = false;
+    seekPreviewPosition = null;
+    _seekStartPosition = null;
+    _dragStartX = null;
+    notifyListeners();
+  }
+
+  // --- Long press speed handling ---
+  void onLongPressStart({double speed = 2.0}) {
+    isLongPressing = true;
+    _speedBeforeLongPress = currentSpeed;
+    longPressSpeed = speed;
+    setSpeed(speed);
+    notifyListeners();
+  }
+
+  void onLongPressEnd() {
+    isLongPressing = false;
+    final fallback = _speedBeforeLongPress ?? 1.0;
+    setSpeed(fallback);
+    _speedBeforeLongPress = null;
+    notifyListeners();
+  }
+
+  /// 设置全屏标志并通知监听者（UI 控制 SystemChrome 由 Widget 层负责）
+  void setFullscreen(bool fullscreen) {
+    isFullscreen = fullscreen;
+    notifyListeners();
+  }
+
+  /// 获取进度条应显示的位置（考虑 seek 锁定）
+  Duration getDisplayPosition() {
+    if (_isSeeking && _lastSeekTarget != null) {
+      return _lastSeekTarget!; // seek 锁定期间显示目标位置
+    }
+    return position; // 正常情况显示实时位置
+  }
+
+  // --- Play/pause indicator ---
+  void showPlayPauseIndicatorTemporarily({int durationMs = 600}) {
+    showPlayPauseIndicator = true;
+    _playPauseTimer?.cancel();
+    _playPauseTimer = Timer(Duration(milliseconds: durationMs), () {
+      showPlayPauseIndicator = false;
+      notifyListeners();
+    });
+    notifyListeners();
+  }
 
   void toggleEpisodeList() { // 切换选集面板
     showEpisodeList = !showEpisodeList; // 取反显示状态
@@ -149,6 +256,8 @@ class VideoControllerState extends ChangeNotifier { // 视频控制器状态，�
   @override
   void dispose() { // 资源释放
     _hideTimer?.cancel(); // 取消计时器
+    _playPauseTimer?.cancel(); // 取消播放/暂停指示计时器
+    _seekLockTimer?.cancel(); // 取消 seek 锁定计时器
     _playingSubscription?.cancel(); // 取消播放订阅
     _positionSubscription?.cancel(); // 取消进度订阅
     _durationSubscription?.cancel(); // 取消时长订阅

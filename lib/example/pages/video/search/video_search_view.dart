@@ -1,5 +1,4 @@
 import 'package:base_flutter/example/pages/video/search/video_list_item.dart';
-import 'package:base_flutter/example/pages/video/player/video_player_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +7,6 @@ import 'package:get_it/get_it.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../features/video/provider/video_search_provider.dart';
 import '../../../features/base/models/video/video_model.dart';
-
 
 // 视频搜索视图
 class VideoSearchView extends StatefulWidget {
@@ -20,7 +18,7 @@ class VideoSearchView extends StatefulWidget {
 
 class _VideoSearchViewState extends State<VideoSearchView> {
   final TextEditingController _searchController = TextEditingController();
-  List<String> _vodOptions = [];
+  Map<String, Map<String, String>> _vodOptions = {};
   String _selectedVod = '';
 
   @override
@@ -35,13 +33,16 @@ class _VideoSearchViewState extends State<VideoSearchView> {
     // 从 AppConfig 中读取 vod 源配置
     try {
       final appConfig = GetIt.instance.get<AppConfig>();
-      final vodMap = appConfig['vod'] as Map<String, dynamic>?;
-      if (vodMap != null && vodMap.isNotEmpty) {
-        _vodOptions = vodMap.keys.toList();
-        _selectedVod = _vodOptions.first;
+      _vodOptions = appConfig.getVodOptions();
+      if (_vodOptions.isNotEmpty) {
+        _selectedVod = _vodOptions.keys.first;
+        print('VOD options loaded: ${_vodOptions.keys.join(', ')}');
+      } else {
+        print('No vod options found');
       }
-    } catch (e) {
-      // 忽略，保留默认
+    } catch (e, stackTrace) {
+      print('Error loading vod config: $e');
+      print('Stack trace: $stackTrace');
     }
   }
 
@@ -49,7 +50,10 @@ class _VideoSearchViewState extends State<VideoSearchView> {
   void _onSearchButtonPressed(BuildContext context) {
     final provider = context.read<VideoSearchProvider>();
     // 使用选中的视频源进行搜索
-    provider.searchVideos(_selectedVod.isNotEmpty ? _selectedVod : 'jy', _searchController.text.trim());
+    provider.searchVideos(
+      _selectedVod.isNotEmpty ? _selectedVod : 'jy',
+      _searchController.text.trim(),
+    );
   }
 
   // 视频项点击事件 - 预留给实际的视频播放逻辑
@@ -59,20 +63,18 @@ class _VideoSearchViewState extends State<VideoSearchView> {
         .where((url) => url.isNotEmpty)
         .toList();
     if (episodeList.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('该视频暂无可用播放源')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('该视频暂无可用播放源')));
       return;
     }
-    context.push('/video-player',extra: video);
+    context.push('/video-player', extra: video);
   }
 
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      appBar: PlatformAppBar(
-        title: const Text('视频搜索'),
-      ),
+      appBar: PlatformAppBar(title: const Text('视频搜索')),
       body: SafeArea(
         child: Container(
           color: Colors.grey[50],
@@ -88,10 +90,16 @@ class _VideoSearchViewState extends State<VideoSearchView> {
               ),
               if (_vodOptions.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -105,22 +113,36 @@ class _VideoSearchViewState extends State<VideoSearchView> {
                     ),
                     child: Row(
                       children: [
-                        const Text('视频源：', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                        const Text(
+                          '视频源：',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
-                              children: _vodOptions.map((key) {
+                              children: _vodOptions.keys.map((key) {
+                                final value = _vodOptions[key]!;
                                 final selected = key == _selectedVod;
+
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 8),
                                   child: ChoiceChip(
                                     backgroundColor: Colors.grey[100],
-                                    selectedColor: Theme.of(context).primaryColor,
+                                    selectedColor: Theme.of(
+                                      context,
+                                    ).primaryColor,
                                     label: Text(
-                                      key,
-                                      style: TextStyle(color: selected ? Colors.white : Colors.black87),
+                                      value['name']??key,
+                                      style: TextStyle(
+                                        color: selected
+                                            ? Colors.white
+                                            : Colors.black87,
+                                      ),
                                     ),
                                     selected: selected,
                                     onSelected: (v) {
@@ -153,17 +175,13 @@ class _VideoSearchViewState extends State<VideoSearchView> {
   }
 }
 
-
 // 搜索栏组件
 class _SearchBar extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSearch;
 
-  const _SearchBar({
-    Key? key,
-    required this.controller,
-    required this.onSearch,
-  }) : super(key: key);
+  const _SearchBar({Key? key, required this.controller, required this.onSearch})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -229,10 +247,7 @@ class _SearchBar extends StatelessWidget {
               ),
             ),
             cupertino: (_, __) => CupertinoElevatedButtonData(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
             child: isLoading
                 ? const SizedBox(
@@ -255,10 +270,8 @@ class _SearchBar extends StatelessWidget {
 class _VideoListContent extends StatefulWidget {
   final Function(VideoModel) onVideoTap;
 
-  const _VideoListContent({
-    Key? key,
-    required this.onVideoTap,
-  }) : super(key: key);
+  const _VideoListContent({Key? key, required this.onVideoTap})
+    : super(key: key);
 
   @override
   State<_VideoListContent> createState() => _VideoListContentState();
@@ -297,29 +310,52 @@ class _VideoListContentState extends State<_VideoListContent> {
   Widget build(BuildContext context) {
     return Consumer<VideoSearchProvider>(
       builder: (context, provider, child) {
-        // 显示错误信息
-        if (provider.errorMessage.isNotEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            showPlatformDialog(
-              context: context,
-              builder: (_) => PlatformAlertDialog(
-                title: const Text('提示'),
-                content: Text(provider.errorMessage),
-                actions: [
-                  PlatformDialogAction(
-                    child: const Text('确定'),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            );
-          });
-        }
-
         // 加载中状态
         if (provider.isLoading) {
+          return Center(child: PlatformCircularProgressIndicator());
+        }
+
+        // 有错误信息时显示在列表区域
+        if (provider.errorMessage.isNotEmpty) {
           return Center(
-            child: PlatformCircularProgressIndicator(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: Colors.red,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '搜索失败',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Text(
+                    provider.errorMessage,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                PlatformElevatedButton(
+                  onPressed: () {
+                    // 用户可以点击重试
+                  },
+                  child: const Text('关闭错误'),
+                ),
+              ],
+            ),
           );
         }
 
@@ -339,10 +375,7 @@ class _VideoListContentState extends State<_VideoListContent> {
                   provider.hasSearched && provider.videoList.isEmpty
                       ? '未找到相关视频'
                       : '输入关键词搜索视频',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -350,7 +383,8 @@ class _VideoListContentState extends State<_VideoListContent> {
         }
 
         // 视频列表
-        final itemCount = provider.videoList.length + (provider.isLoadingMore ? 1 : 0);
+        final itemCount =
+            provider.videoList.length + (provider.isLoadingMore ? 1 : 0);
         return ListView.builder(
           controller: _scrollController,
           itemCount: itemCount,
@@ -365,9 +399,7 @@ class _VideoListContentState extends State<_VideoListContent> {
               // 底部加载指示器
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Center(
-                  child: PlatformCircularProgressIndicator(),
-                ),
+                child: Center(child: PlatformCircularProgressIndicator()),
               );
             }
           },

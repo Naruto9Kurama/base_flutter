@@ -22,6 +22,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart'; // Flutter 与 Hive 的集�
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/di/injection.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/theme/app_theme.dart';
@@ -89,7 +90,7 @@ void main() async {
   bool enableProxy = false;
   Map<String, dynamic> proxyConfig = config["proxy"];
   if (kIsWeb) {
-    enableProxy = proxyConfig["web"] ?? false;
+    enableProxy = proxyConfig["web"] ?? true;
   } else if (Platform.isAndroid) {
     enableProxy = proxyConfig["android"] ?? false;
   } else if (Platform.isIOS) {
@@ -118,22 +119,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ThemeProvider>.value(
-      value: getIt<ThemeProvider>(),
-      child: Consumer<ThemeProvider>(
-        builder: (context, theme, _) {
-          return MaterialApp.router(
-            routerConfig: appRouter,
-            title: 'Flutter DI Demo',
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: theme.themeMode,
-            locale: context.locale,
-            supportedLocales: context.supportedLocales,
-            localizationsDelegates: context.localizationDelegates,
-                            );
-                          },
-                        ),
+    return ScreenUtilInit(
+      designSize: const Size(1080, 1920),
+      builder: (context, child) {
+        return ChangeNotifierProvider<ThemeProvider>.value(
+          value: getIt<ThemeProvider>(),
+          child: Consumer<ThemeProvider>(
+            builder: (context, theme, _) {
+              return MaterialApp.router(
+                routerConfig: appRouter,
+                title: 'Flutter DI Demo',
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: theme.themeMode,
+                locale: context.locale,
+                supportedLocales: context.supportedLocales,
+                localizationsDelegates: context.localizationDelegates,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
