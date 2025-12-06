@@ -51,11 +51,34 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
                         controls: NoVideoControls,
                       ),
                     ),
+                    // 🔄 缓冲指示器 (改进版)
                     if (state.isBuffering)
-                      const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 3.0,
+                      Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 4.0,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              '缓冲中...',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              state.networkSpeedText,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     Positioned.fill(
