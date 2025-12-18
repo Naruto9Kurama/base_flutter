@@ -5,7 +5,10 @@
   "tab": {
     "home": "home",
     "profile": "profile",
-    "file_list": "File List"
+    "file_list": "File List",
+    "drive": "Drive",
+    "video_search": "Search",
+    "hot_videos": "Hot Videos"
   },
   "auth": {
     "title": "Login",

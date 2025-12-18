@@ -135,6 +135,8 @@ class VideoListItem extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   video.detail ?? '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 4),

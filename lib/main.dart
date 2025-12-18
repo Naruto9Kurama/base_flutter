@@ -3,12 +3,11 @@ import 'dart:io';
 import 'package:base_flutter/core/api/dio_client.dart';
 import 'package:base_flutter/core/config/app_config.dart';
 import 'package:base_flutter/example/features/base/models/video/video_model.dart';
-import 'package:base_flutter/example/features/video/provider/video_player_provider.dart';
-import 'package:base_flutter/example/features/video/respository/vod/base_vod_respository.dart';
-import 'package:base_flutter/example/features/video/respository/vod_respository.dart';
+import 'package:base_flutter/example/features/video/provider/douban_provider.dart';
 import 'package:base_flutter/example/pages/drive/drive_main_page.dart';
 import 'package:base_flutter/example/pages/file/file_list_page.dart';
 import 'package:base_flutter/example/pages/login/login_page.dart';
+import 'package:base_flutter/example/pages/video/home/video_home_page.dart';
 import 'package:base_flutter/example/pages/video/player/video_player_screen.dart';
 import 'package:base_flutter/example/pages/video/search/video_search.dart';
 import 'package:base_flutter/hive_registrar.g.dart';
@@ -78,13 +77,18 @@ void main() async {
     getIt.registerFactoryParam<TabPage, Key?, void>(
       (key, _) => TabPage(key: key),
     );
+    getIt.registerFactoryParam<VideoHomePage, Key?, void>(
+      (key, _) => VideoHomePage(key: key),
+    );
     getIt.registerFactoryParam<VideoPlayerScreen, Key?, VideoModel>(
       (key, videoModel) =>
           VideoPlayerScreen(key: key, videoModel: videoModel),
     );
 
-    //todo 根据配置的vod url注册实例
-    // getIt.registerLazySingleton<VodRespository>(() => BaseVodRespository(baseUrl: "http://cj.ffzyapi.com/",appConfig:config),instanceName: 'feifan')
+    // 注册 DoubanProvider
+    getIt.registerLazySingleton<DoubanProvider>(
+      () => DoubanProvider(dioClient: getIt<DioClient>()),
+    );
   });
 
   bool enableProxy = false;
@@ -122,8 +126,15 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(1080, 1920),
       builder: (context, child) {
-        return ChangeNotifierProvider<ThemeProvider>.value(
-          value: getIt<ThemeProvider>(),
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ThemeProvider>.value(
+              value: getIt<ThemeProvider>(),
+            ),
+            ChangeNotifierProvider<DoubanProvider>(
+              create: (_) => getIt<DoubanProvider>(),
+            ),
+          ],
           child: Consumer<ThemeProvider>(
             builder: (context, theme, _) {
               return MaterialApp.router(

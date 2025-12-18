@@ -113,93 +113,94 @@ class _VideoControlsOverlayState extends State<VideoControlsOverlay> {
       builder: (context, state, child) {
         return LayoutBuilder(
           builder: (context, constraints) {
-            return SizedBox.expand(
-              child: Stack(
-                children: [
-                  // 主要内容层（包含主控制条和梯度）
-                  SizedBox.expand(
-                    child: Stack(
-                      children: [
-                        // Main controls (可隐藏)
-                        if (state.showControls)
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 4.h),
-                            child: Column(
-                              children: [
-                                _buildTopBar(context, state),
-                                Expanded(
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: _buildCenterControls(state),
-                                  ),
+            // ✅ 修复：使用 Stack 而不是 SizedBox.expand
+            return Stack(
+              fit: StackFit.expand, // 填满父容器
+              children: [
+                // 主要内容层（包含主控制条和梯度）
+                // ✅ 使用 Positioned.fill 替代 SizedBox.expand
+                Positioned.fill(
+                  child: Stack(
+                    children: [
+                      // Main controls (可隐藏)
+                      if (state.showControls)
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 4.h),
+                          child: Column(
+                            children: [
+                              _buildTopBar(context, state),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: _buildCenterControls(state),
                                 ),
-                                _buildBottomControls(state),
-                              ],
-                            ),
-                          ),
-
-                        // Gradient overlay
-                        IgnorePointer(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.black.withOpacity(0.15),  // 🔆 进一步降低到 15% (之前 30%)
-                                  Colors.transparent,
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.2),  // 🔆 进一步降低到 20% (之前 35%)
-                                ],
-                                stops: const [0.0, 0.15, 0.75, 1.0],
                               ),
-                            ),
+                              _buildBottomControls(state),
+                            ],
                           ),
                         ),
 
-                        // Play/Pause indicator
-                        if (state.showPlayPauseIndicator)
-                          Positioned.fill(
-                            child: Center(
-                              child: TweenAnimationBuilder<double>(
-                                duration: const Duration(milliseconds: 300),
-                                tween: Tween(begin: 0.0, end: 1.0),
-                                builder: (context, value, child) {
-                                  return Opacity(
-                                    opacity: 1.0 - value,
-                                    child: Transform.scale(
-                                      scale: 1.0 + (value * 0.3),
-                                      child: Container(
-                                        padding: EdgeInsets.all(20.w),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.5),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          state.isPlaying ? Icons.play_arrow_rounded : Icons.pause_rounded,
-                                          color: Colors.white,
-                                          size: _getResponsiveTextSize(48.w),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                      // Gradient overlay
+                      IgnorePointer(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black.withOpacity(0.15),
+                                Colors.transparent,
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.2),
+                              ],
+                              stops: const [0.0, 0.15, 0.75, 1.0],
                             ),
                           ),
-                      ],
-                    ),
+                        ),
+                      ),
+
+                      // Play/Pause indicator
+                      if (state.showPlayPauseIndicator)
+                        Positioned.fill(
+                          child: Center(
+                            child: TweenAnimationBuilder<double>(
+                              duration: const Duration(milliseconds: 300),
+                              tween: Tween(begin: 0.0, end: 1.0),
+                              builder: (context, value, child) {
+                                return Opacity(
+                                  opacity: 1.0 - value,
+                                  child: Transform.scale(
+                                    scale: 1.0 + (value * 0.3),
+                                    child: Container(
+                                      padding: EdgeInsets.all(20.w),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.5),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        state.isPlaying ? Icons.play_arrow_rounded : Icons.pause_rounded,
+                                        color: Colors.white,
+                                        size: _getResponsiveTextSize(48.w),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
+                ),
 
-                  // ✅ 顶级层：Seek preview - 永远独立显示在最顶部（由专用方法构建）
-                  if (state.isSeeking && state.seekPreviewPosition != null)
-                    _buildSeekPreviewOverlay(state),
+                // ✅ 顶级层：Seek preview - 永远独立显示在最顶部
+                if (state.isSeeking && state.seekPreviewPosition != null)
+                  _buildSeekPreviewOverlay(state),
 
-                  // ✅ 顶级层：Long-press speed - 永远独立显示在最顶部（由专用方法构建）
-                  if (state.isLongPressing)
-                    _buildLongPressSpeedOverlay(state),
-                ],
-              ),
+                // ✅ 顶级层：Long-press speed - 永远独立显示在最顶部
+                if (state.isLongPressing)
+                  _buildLongPressSpeedOverlay(state),
+              ],
             );
           },
         );

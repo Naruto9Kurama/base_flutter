@@ -1,9 +1,7 @@
 import 'package:base_flutter/core/di/injection.dart';
 import 'package:base_flutter/example/features/base/models/video/video_model.dart';
-import 'package:base_flutter/example/features/file/models/file/file_item.dart';
-import 'package:base_flutter/example/features/file/providers/file_item/file_item_provider.dart';
-import 'package:base_flutter/example/features/video/provider/video_player_provider.dart';
 import 'package:base_flutter/example/pages/drive/drive_main_page.dart';
+import 'package:base_flutter/example/pages/video/home/video_home_page.dart';
 import 'package:base_flutter/example/pages/video/player/video_player_screen.dart';
 import 'package:base_flutter/example/pages/login/login_page.dart';
 import 'package:base_flutter/example/pages/video/search/video_search.dart';
@@ -51,6 +49,11 @@ final GoRouter appRouter = GoRouter(
       path: '/video-search',
       builder: (context, state) =>
           GetIt.instance.get<VideoSearchPage>(param1: state.pageKey),
+    ),
+    GoRoute(
+      path: '/video-home',
+      builder: (context, state) =>
+          GetIt.instance.get<VideoHomePage>(param1: state.pageKey),
     ),
   ],
 );

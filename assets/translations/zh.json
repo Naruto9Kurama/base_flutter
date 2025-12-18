@@ -6,7 +6,9 @@
     "home": "首页",
     "profile": "个人信息",
     "file_list": "文件列表",
-    "video_search": "搜索"
+    "drive": "云盘",
+    "video_search": "搜索",
+    "hot_videos": "热门视频"
   },
   "auth": {
     "title": "登录",
